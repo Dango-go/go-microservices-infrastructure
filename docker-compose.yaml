@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  auth-svc:
+    build: ./go-grpc-auth-svc
+    ports:
+      - "50051:50051"
+    environment:
+      - PORT=:50051
+      - DB_URL=postgres://...
+
+  product-svc:
+    build: ./go-grpc-product-svc
+    ports:
+      - "50052:50052"
+
+  order-svc:
+    build: ./go-grpc-order-svc
+    ports:
+      - "50053:50053"
+
+  api-gateway:
+    build: ./go-grpc-api-gateway
+    ports:
+      - "8080:8080" # Зовнішній HTTP порт для клієнтів
+    depends_on:
+      - auth-svc
+      - product-svc
+      - order-svc
