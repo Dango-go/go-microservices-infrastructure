@@ -1,7 +1,7 @@
 variable "Project" {
   description = "Name of the project"
   type        = string
-  default     = "Conduit-cluster"
+  default     = "go-cluster"
 }
 
 variable "Environment" {

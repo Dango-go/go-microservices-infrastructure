@@ -6,7 +6,7 @@ module "vpc" {
 
 module "eks" {
     source     = "./modules/eks"
-    vpc_id     = module.vpc.vpc_id
+    vpc_id     = module.vpc.vpc_id  # Atach the VPC ID from the VPC module to the EKS module
     subnet_ids = module.vpc.public_subnets
     Environment = var.Environment
     Project     = var.Project

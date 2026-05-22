@@ -1,11 +1,14 @@
-**.tfstate
-**.tfstate.*
-**.tfstate.backup
+**/terraform/.terraform/
+.terraform/
 
-*.tfvars
-*.tfvars.json
+**/*.tfstate
+**/*.tfstate.*
+*.tfstate
+*.tfstate.*
 
-**/tf/.terraform/
+**/.terraform.lock.hcl
 .terraform.lock.hcl
+**/*.tfvars
+**/*.tfvars.json
 
 .DS_Store

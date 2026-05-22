@@ -23,36 +23,39 @@ module "eks" {
   enable_irsa = true
 
   cluster_addons = {
-    coredns = {}
-    vpc_cni = {}
-    kube_proxy = {}
-    aws-ebs-csi-driver = {}
+    coredns = { addon_version = "v1.11.3-eksbuild.1"}
+    vpc_cni = { addon_version = "v1.18.5-eksbuild.1" }
+    kube_proxy = { addon_version = "v1.31.0-eksbuild.1" }
+    aws-ebs-csi-driver = { addon_version = "v1.35.0-eksbuild.1" }
   }
 
   tags = {
-    Node = "ControlPlane"
+    Node = "Cluster"
+    
   }  
 
   # Worker Nodes
   eks_managed_node_groups = {
     main = {
+      ami_type = "BOTTLEROCKET_x86_64"
       instance_types = ["t3.medium"]
       min_size     = 1
       max_size     = 3
       desired_size = 1
 
+
       
-      associate_public_ip_address = true
+      associate_public_ip_address = true # For public subnets, set to true to allow nodes to have public IPs for direct internet access. For private subnets, set to false and ensure proper NAT gateway configuration for outbound internet access.
       
        
       block_device_mappings = {
         xvda = {
           device_name = "/dev/xvda"
           ebs = {
-            volume_size = 25
+            volume_size = 20
             volume_type = "gp3"
           }
-          }
+        }
 
           tags = {
             Environment = var.Environment
@@ -79,7 +82,7 @@ module "eks" {
       from_port                     = 1025
       to_port                       = 65535
       type                          = "ingress"
-      source_cluster_security_group = true
+      source_cluster_security_group = true # Allow traffic only from the cluster security group
     }
   }
 }
