@@ -1,6 +1,6 @@
 module github.com/anazibinurasheed/go-grpc-microservice/go-grpc-auth-svc
 
-go 1.18
+go 1.22
 
 require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible

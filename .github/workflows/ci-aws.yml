@@ -41,6 +41,26 @@ jobs:
           changed:
             - '${{ matrix.directory }}/**'
 
+    - name: Install Go on runner
+      if: steps.filter.outputs.changed == 'true'
+      uses: actions/setup-go@v5
+      with: 
+        go-version: '1.22'
+        cache: true
+        cache-dependency-path: ${{ matrix.directory }}/go.mod
+
+    - name: Linter
+      if: steps.filter.outputs.changed == 'true'
+      uses: golangci/golangci-lint-action@v6
+      with:
+        version: v1.59
+        working-directory: ${{ matrix.directory }}
+
+    - name: Run tests
+      if: steps.filter.outputs.changed == 'true'
+      run: |
+        cd ${{ matrix.directory }}
+        go test -v ./...
 
     - name: Configure AWS credentials
       if: steps.filter.outputs.changed == 'true'

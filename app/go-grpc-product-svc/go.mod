@@ -1,6 +1,6 @@
 module gihub.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc
 
-go 1.18
+go 1.22
 
 require (
 	github.com/spf13/viper v1.16.0
