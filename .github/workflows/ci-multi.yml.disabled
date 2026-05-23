@@ -1,0 +1,80 @@
+name: CI/CD Pipeline for Microservices
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'app/**'
+      - '.github/workflows/ci-multi.yml'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        service: [auth-svc, order-svc, product-svc, api-gateway]
+        include:
+          - service: auth-svc
+            directory: app/go-grpc-auth-svc
+            image_name: go-auth-service:latest
+          - service: order-svc
+            directory: app/go-grpc-order-svc
+            image_name: go-order-service:latest 
+          - service: product-svc
+            directory: app/go-grpc-product-svc
+            image_name: go-product-service:latest 
+          - service: api-gateway
+            directory: app/go-grpc-api-gateway
+            image_name: go-gtw-service:latest 
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+
+    - name: Check for changes in service directory
+      id: filter   
+      uses: dorny/paths-filter@v3  # Check if there are changes in the specific service directory
+      with:
+        filters: |
+          changed:
+            - '${{ matrix.directory }}/**'
+
+
+    - name: Login to Docker Hub
+      if: steps.filter.outputs.changed == 'true'
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Set up Buildx for advanced caching and saving in GitHub Cache
+    - name: Set up Docker Buildx
+      if: steps.filter.outputs.changed == 'true'
+      uses: docker/setup-buildx-action@v3
+
+
+    - name: Run Trivy vulnerability scanner (Optional/Placeholder)
+      if: steps.filter.outputs.changed == 'true'
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '${{ matrix.directory }}'
+        severity: 'CRITICAL,HIGH'
+
+
+    - name: Build and Push to Docker Hub
+      if: steps.filter.outputs.changed == 'true'
+      uses: docker/build-push-action@v5
+      with:
+        context: ${{ matrix.directory }}
+        file: ${{ matrix.directory }}/Dockerfile
+        push: true
+        tags: |
+          ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image_name }}:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image_name }}:${{ github.sha }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    

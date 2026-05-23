@@ -1,5 +1,5 @@
 locals {
-  cluster_name = "astronomy-shop-dev"
+  cluster_name = "go-cluster-${var.Environment}"
   region       = "eu-central-1"
 }
 
@@ -16,18 +16,12 @@ module "eks" {
   cluster_endpoint_public_access = true
  
   authentication_mode = "API_AND_CONFIG_MAP"
-  
  
   enable_cluster_creator_admin_permissions = true
   
   enable_irsa = true
 
-  cluster_addons = {
-    coredns = { addon_version = "v1.11.3-eksbuild.1"}
-    vpc_cni = { addon_version = "v1.18.5-eksbuild.1" }
-    kube_proxy = { addon_version = "v1.31.0-eksbuild.1" }
-    aws-ebs-csi-driver = { addon_version = "v1.35.0-eksbuild.1" }
-  }
+  cluster_addons = {}
 
   tags = {
     Node = "Cluster"
@@ -84,5 +78,56 @@ module "eks" {
       type                          = "ingress"
       source_cluster_security_group = true # Allow traffic only from the cluster security group
     }
+  }
+}
+
+module "ebs_csi_irsa_driver" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.0"
+  role_name = "ebs-csi-driver-go-cluster"
+  
+  attach_ebs_csi_policy = true
+  
+  oidc_providers = {
+    ex = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
+    }
+  }
+}
+
+resource "aws_eks_addon" "kube_proxy" {
+  cluster_name = module.eks.cluster_name
+  addon_name   = "kube-proxy"
+}
+
+resource "aws_eks_addon" "vpc_cni" {
+  cluster_name = module.eks.cluster_name
+  addon_name   = "vpc-cni"
+}
+
+resource "aws_eks_addon" "coredns" {
+  cluster_name = module.eks.cluster_name
+  addon_name   = "coredns"
+}
+
+resource "aws_eks_addon" "ebs_csi" {
+  cluster_name = module.eks.cluster_name
+  addon_name   = "aws-ebs-csi-driver"
+  service_account_role_arn = module.ebs_csi_irsa_driver.iam_role_arn
+}
+
+resource "aws_ecr_repository" "go_services" {
+  for_each = toset(["go-auth-service", "go-order-service", "go-product-service", "go-gtw-service"])
+  name = each.key
+  image_tag_mutability = "MUTABLE"
+  
+  image_scanning_configuration {
+    scan_on_push = true 
+  }
+
+  tags = {
+    Enviroment = var.Environment
+    Project    = var.Project
   }
 }
