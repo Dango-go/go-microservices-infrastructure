@@ -10,6 +10,9 @@ module "eks" {
     subnet_ids = module.vpc.public_subnets
     Environment = var.Environment
     Project     = var.Project
+    oidc_id     = var.oidc_id
+    aws_account_id = var.aws_account_id
+    Region = var.Region
 }
 
 module "security" {
