@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-config
+data:
+  init.sql: |
+    CREATE DATABASE auth_svc;
+    CREATE DATABASE product_svc;
+    CREATE DATABASE order_svc;    

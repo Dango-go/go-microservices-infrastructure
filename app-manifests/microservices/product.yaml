@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: product
-          image: 586050444726.dkr.ecr.eu-central-1.amazonaws.com/go-product-service:v1
+          image: 586050444726.dkr.ecr.eu-central-1.amazonaws.com/go-product-service:8df10ebc0b4e249953e69c77eb499520a69d8960
           ports:
             - containerPort: 8080
 

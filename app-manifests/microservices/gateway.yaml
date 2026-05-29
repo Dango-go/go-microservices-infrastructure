@@ -15,10 +15,10 @@ spec:
         app: go-app
     spec:
       containers:
-        - name: nginx
-          image: 586050444726.dkr.ecr.eu-central-1.amazonaws.com/go-gtw-service:v1
+        - name: gatetway
+          image: 586050444726.dkr.ecr.eu-central-1.amazonaws.com/go-gtw-service:latest
           ports:
-            - containerPort: 8080
+            - containerPort: 3000 # Service listen
 
           resources:
             requests:
@@ -30,13 +30,13 @@ spec:
 
           livenessProbe:
             tcpSocket:
-              port: 8080
+              port: 3000
             initialDelaySeconds: 15  # Skipping time in running mode. Only one time
             periodSeconds: 10  # Check seconds. If syn/ack established - success
             failureThreshold: 3
           readinessProbe:
             tcpSocket:
-              port: 8080
+              port: 3000
             initialDelaySeconds: 15
             periodSeconds: 5  # Faster for checkup work
             failureThreshold: 3

@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  serviceName: "postgres-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-db 
+  minReadySeconds: 10 
+
+  template:
+    metadata:
+      labels:
+        app: postgres-db  
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: app
+                  operator: In
+                  values: 
+                  - postgres-db
+            topologyKey: "kubernetes.io/hostname"
+
+      containers:
+      - name: postgres
+        image: postgres:15-alpine
+        ports:
+        - containerPort: 5432
+          name: postgres
+
+
+        env:  
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret     
+              key: postgres-password     
+
+        resources:
+          requests: 
+            cpu: "500m"  
+            memory: "1Gi"  
+          limits:   
+            cpu: "1000m"  
+            memory: "2Gi"  
+
+        volumeMounts:
+        - name: postgres-data    
+          mountPath: /var/lib/postgresql/data  
+        - name: init-scripts
+          mountPath: /docker-entrypoint-initdb.d
+
+
+        readinessProbe:
+          exec: 
+            command: ["pg_isready", "-U", "postgres"]
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        livenessProbe:
+          exec: 
+            command: ["pg_isready", "-U", "postgres"]
+          initialDelaySeconds: 25
+          periodSeconds: 20
+
+
+      volumes:
+      - name: init-scripts
+        configMap:
+          name: postgres-init-config
+
+
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "gp3" 
+      resources:
+        requests:
+          storage: 5Gi
