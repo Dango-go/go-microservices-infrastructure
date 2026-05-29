@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"gihub.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc/pkg/db"
-	"gihub.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc/pkg/models"
-	"gihub.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc/pkg/pb"
+	"github.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc/pkg/db"
+	"github.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc/pkg/models"
+	"github.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc/pkg/pb"
 )
 
 type Server struct {

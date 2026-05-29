@@ -1,0 +1,36 @@
+controller:
+
+  replicaCount: 2
+
+  hostNetwork: True
+  dnsPolicy: ClusterFirstWithHostNet
+
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution: # Strict
+        - labelSelector:
+            matchExpressions: # Conditions
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - ingress-nginx
+          topologyKey: "kubernetes.io/hostname" # Instance hostname
+
+
+  config:
+
+    proxy-body-size: "20m" # Limit traffic size
+
+    ssl-protocols: "TLSv1.2 TLSv1.3" # Securing
+
+
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+
+  service:
+    enabled: false # With dev / budget we use this ingress-controller like LB in AWS. 

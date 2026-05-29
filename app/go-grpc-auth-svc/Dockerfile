@@ -10,11 +10,7 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build \
-    -ldflags="-w -s" \
-    # Name of binary
-    -o /app/auth-service \ 
-    ./cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /app/auth-service ./cmd
 
 FROM alpine:latest AS final
 

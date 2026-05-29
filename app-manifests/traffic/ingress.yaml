@@ -1,0 +1,31 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argo-ingress
+  namespace: dev
+  annotations:
+    cert-manager.io/cluster-issuer: "argo-cluster-issuer" # name cluster issuer so that the manager understands in which clusterissuer to look for data for query generation in ssl-service.
+  labels:
+    app.kubernetes.io/name: ingress-1
+
+spec:
+  ingressClassName: nginx
+
+  tls:
+    - hosts:
+      - dango9.uk
+      secretName: main-tls-secret-for-goapp
+  
+  # Routing our argo-ingress
+  rules:
+  - host: dango9.uk # Filter
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: service-for-go
+            port: 
+              number: 80

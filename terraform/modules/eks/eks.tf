@@ -33,9 +33,9 @@ module "eks" {
     main = {
       ami_type = "BOTTLEROCKET_x86_64"
       instance_types = ["t3.medium"]
-      min_size     = 1
+      min_size     = 2
       max_size     = 3
-      desired_size = 1
+      desired_size = 2
 
 
       

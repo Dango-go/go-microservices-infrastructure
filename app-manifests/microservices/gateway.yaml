@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-app-gateway
+  labels:
+    app: go-microservices-dm
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: go-app
+  template:
+    metadata:
+      labels:
+        app: go-app
+    spec:
+      containers:
+        - name: nginx
+          image: 586050444726.dkr.ecr.eu-central-1.amazonaws.com/go-gtw-service:v1
+          ports:
+            - containerPort: 8080
+
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "100Mi"
+              cpu: "500m"
+
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 15  # Skipping time in running mode. Only one time
+            periodSeconds: 10  # Check seconds. If syn/ack established - success
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 5  # Faster for checkup work
+            failureThreshold: 3
+

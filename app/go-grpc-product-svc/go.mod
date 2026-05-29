@@ -1,4 +1,4 @@
-module gihub.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc
+module github.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc
 
 go 1.22
 

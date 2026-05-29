@@ -12,6 +12,14 @@ func RegisterRoutes(r *gin.Engine, c *config.Config) *ServiceClient {
 	svc := &ServiceClient{
 		Client: InitServiceClient(c),
 	}
+	r.GET("/healthz", func(ctx *gin.Context) {
+        ctx.JSON(200, gin.H{"status": "ok"})
+    })
+
+    r.GET("/ready", func(ctx *gin.Context) {
+        ctx.JSON(200, gin.H{"status": "ready"})
+    })
+
 
 	routes := r.Group("/auth")
 	routes.POST("/register", svc.Register)

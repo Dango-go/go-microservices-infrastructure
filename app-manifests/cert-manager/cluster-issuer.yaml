@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: argo-cluster-issuer
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: bogdangolovan1011@gmail.com
+    privateKeySecretRef:
+      name: letsencrypt-private-key # Private Key which cert-manager will create and send crypt order packet to Let's Encrypt.
+    solvers:
+    - http01: # type protocol in temporary web-server which create cert-manager.
+        ingress:
+          ingressClassName: nginx  # ingressClassName of our main ingress in cluster for argo.

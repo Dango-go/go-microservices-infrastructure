@@ -30,9 +30,6 @@ func main() {
 	}
 
 	productSvc := client.InitProductServiceClient(c.ProductSvcUrl)
-	if err != nil {
-		log.Fatalln("Failed to listing:", err)
-	}
 
 	fmt.Println("Order Svc on:", c.Port)
 

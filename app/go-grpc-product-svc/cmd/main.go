@@ -5,10 +5,10 @@ import (
 	"log"
 	"net"
 
-	"gihub.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc/pkg/config"
-	"gihub.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc/pkg/db"
-	"gihub.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc/pkg/pb"
-	"gihub.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc/pkg/services"
+	"github.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc/pkg/config"
+	"github.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc/pkg/db"
+	"github.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc/pkg/pb"
+	"github.com/anazibinurasheed/go-grpc-microservice/go-grpc-product-svc/pkg/services"
 	"google.golang.org/grpc"
 )
 
