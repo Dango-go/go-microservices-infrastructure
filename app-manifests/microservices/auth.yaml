@@ -17,8 +17,11 @@ spec:
       containers:
         - name: auth
           image: 586050444726.dkr.ecr.eu-central-1.amazonaws.com/go-auth-service:latest
+          env:
+            - name: DB_URL
+              value: host=db-service user=service password=8590 dbname=auth_svc port=5432
           ports:
-            - containerPort: 8080
+            - containerPort: 50051
 
           resources:
             requests:
@@ -30,13 +33,13 @@ spec:
 
           livenessProbe:
             tcpSocket:
-              port: 8080
+              port: 50051
             initialDelaySeconds: 15  
             periodSeconds: 10
             failureThreshold: 3  
           readinessProbe:
             tcpSocket:
-              port: 8080
+              port: 50051
             initialDelaySeconds: 15
             periodSeconds: 5  
             failureThreshold: 3

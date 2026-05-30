@@ -18,7 +18,10 @@ spec:
         - name: product
           image: 586050444726.dkr.ecr.eu-central-1.amazonaws.com/go-product-service:8df10ebc0b4e249953e69c77eb499520a69d8960
           ports:
-            - containerPort: 8080
+            - containerPort: 50052
+          env:
+            - name: DB_URL
+              value: host=db-service user=service password=8590 dbname=order_svc port=5432
 
           resources:
             requests:
@@ -30,13 +33,13 @@ spec:
 
           livenessProbe:
             tcpSocket:
-              port: 8080
+              port: 50052
             initialDelaySeconds: 15  
             periodSeconds: 10
             failureThreshold: 3  
           readinessProbe:
             tcpSocket:
-              port: 8080
+              port: 50052
             initialDelaySeconds: 15
             periodSeconds: 5
             failureThreshold: 3  

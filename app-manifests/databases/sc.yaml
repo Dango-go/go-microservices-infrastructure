@@ -1,0 +1,9 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gp3  
+provisioner: ebs.csi.aws.com 
+reclaimPolicy: Retain # unmount volume for pod but don't delete in AWS
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  type: gp3

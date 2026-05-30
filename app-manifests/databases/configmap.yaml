@@ -5,6 +5,31 @@ metadata:
   name: postgres-init-config
 data:
   init.sql: |
-    CREATE DATABASE auth_svc;
-    CREATE DATABASE product_svc;
-    CREATE DATABASE order_svc;    
+    DO $$
+    BEGIN
+        IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'service') THEN
+            CREATE ROLE service WITH LOGIN PASSWORD '8590';
+        END IF;
+    END
+    $$;
+
+
+    GRANT ALL PRIVILEGES ON DATABASE auth_svc TO service;
+    GRANT ALL PRIVILEGES ON DATABASE order_svc TO service;
+    GRANT ALL PRIVILEGES ON DATABASE product_svc TO service;
+
+
+    \c auth_svc
+    GRANT ALL ON SCHEMA public TO service;
+    GRANT ALL ON ALL TABLES IN SCHEMA public TO service;
+    GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO service;
+
+    \c order_svc
+    GRANT ALL ON SCHEMA public TO service;
+    GRANT ALL ON ALL TABLES IN SCHEMA public TO service;
+    GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO service;
+
+    \c product_svc
+    GRANT ALL ON SCHEMA public TO service;
+    GRANT ALL ON ALL TABLES IN SCHEMA public TO service;
+    GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO service;
