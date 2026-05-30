@@ -15,5 +15,5 @@
 
 trust-policy.json.depricated
 
-karpenter
-argo-cd
+karpenter/
+argo-cd/
